@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="main-wrap">
+        <section>
+          <div id="current-time-display"></div>
+        </section>
+        <nav class="navbar">
+          <button id="start-stop" tabindex="1">Start/Stop</button>
+          <button id="reset" tabindex="2">Reset</button>
+          <button id="record-time" tabindex="3">Record Time</button>
+        </nav>
+        <section id="past-times-display"></section>
+      </div>
+</body>
+<script>
+    (function() {
+        'use_strict';
+        let currentTime;
+        let timeRunning;
+        let pastTimes = ['<span class="subtitle">Past Times</span>'];
+        let intervalId;
+      
+        let startStop = document.getElementById('start-stop');
+        let reset = document.getElementById('reset');
+        let recordTime = document.getElementById('record-time');
+        let currentTimeDisplay = document.getElementById('current-time-display');
+        let pastTimesDisplay = document.getElementById('past-times-display');
+      
+        function init() {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+      
+          currentTime = 0;
+          timeRunning = false;
+          pastTimes.length = 1;
+          currentTimeDisplay
+            .textContent = currentTime;
+      
+          listPastTimes();
+        }
+      
+        function triggerStartStop() {
+          if (!timeRunning) {
+            timeRunning = true;
+      
+            intervalId = setInterval(() => {
+              currentTime += 10; // Increment
+      
+              currentTimeDisplay.textContent = // Write
+                (currentTime / 1000).toFixed(2);
+            }, 10);
+          } else {
+            clearInterval(intervalId);
+            timeRunning = false;
+          }
+        }
+      
+        function listPastTimes() {
+          var html = '<ul class="list-past-times">';
+      
+          pastTimes.forEach((item) => {
+            html += '<li>' + item + '</li>';
+          });
+      
+          pastTimesDisplay.innerHTML = html + '</ul>';
+        }
+      
+        function recordCurrentTime() {
+          pastTimes.push((currentTime / 1000).toFixed(2));
+          listPastTimes();
+        }
+      
+        // -- ATTACHING EVENT HANDLER ------------------------  
+        startStop.addEventListener('click', triggerStartStop);
+        reset.addEventListener('click', init);
+        recordTime.addEventListener('click', recordCurrentTime);
+      
+        startStop.addEventListener('keydown', (event) => {
+          if (event.keyCode === 83) { // 83 === 's' in ASCII 
+            triggerStartStop();
+          }
+        });
+      
+        reset.addEventListener('keydown', (event) => {
+          if (event.keyCode === 82) { // 82 === 'r' in ASCII 
+            init();
+          }
+        });
+      
+        recordTime.addEventListener('keydown', (event) => {
+          if (event.keyCode === 84) { // 84 === 't' in ASCII 
+            recordCurrentTime();
+          }
+        });
+      
+        init();
+      })();
+</script>
+</html>
